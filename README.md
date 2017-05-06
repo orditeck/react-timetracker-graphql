@@ -14,7 +14,7 @@ sign in mutations.
 ## Quick deploy
 
 1. Clone the repo
-2. Click [![graphql-up](http://static.graph.cool/images/graphql-up.svg)](https://www.graph.cool/graphql-up/new?source=__SCHEMA_URL__)  to deploy your GraphQL API
+2. Click [![graphql-up](http://static.graph.cool/images/graphql-up.svg)](https://www.graph.cool/graphql-up/new?source=https://raw.githubusercontent.com/orditeck/react-timetracker-graphql/master/timetracker.schema)  to deploy your GraphQL API
 3. Run `npm install`
 4. Run `npm run`
 5. Enjoy!
