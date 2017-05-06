@@ -1,0 +1,40 @@
+.week-navigator {
+
+  margin-bottom: 20px;
+
+  > button {
+    width: 32px;
+    &:first-of-type { float: left; }
+    &:last-of-type  { float: right; }
+  }
+
+  > table.ms-Table {
+    float: left;
+    width: calc(100% - 64px);
+
+    td {
+      position:relative;
+      button.ms-Button--icon {
+        position: absolute;
+        top: 10px;
+        right: 6px;
+        font-size: 12px;
+
+        &.empty {
+          opacity: 0.6;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+}

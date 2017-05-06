@@ -1,0 +1,11 @@
+.ms-Button {
+
+  &.ms-redDark {
+    background-color: $ms-color-red;
+
+    &:hover {
+      background-color: $ms-color-redDark;
+    }
+  }
+
+}

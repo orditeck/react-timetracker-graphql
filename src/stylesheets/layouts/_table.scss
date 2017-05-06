@@ -1,0 +1,32 @@
+table, table.ms-Table {
+  tbody {
+    td {
+
+      padding: 10px 10px 0;
+      text-align: right;
+
+      .ms-TextField {
+        margin: 0;
+      }
+
+      &.saved {
+
+        .ms-TextField > div {
+
+          @keyframes animateBorder {
+            0% { border: 1px solid #c8c8c8; }
+            25% { border: 1px solid $ms-color-themePrimary; }
+            50% { border: 1px solid #c8c8c8; }
+            75% { border: 1px solid $ms-color-themePrimary; }
+            100% { border: 1px solid #c8c8c8; }
+          }
+
+          animation: animateBorder 700ms normal;
+          animation-iteration-count: 1;
+        }
+
+      }
+
+    }
+  }
+}

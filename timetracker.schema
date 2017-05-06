@@ -1,0 +1,49 @@
+﻿type Client implements Node {
+  company: String! @isUnique
+  createdAt: DateTime!
+  id: ID! @isUnique
+  projects: [Project!]! @relation(name: "ProjectOnClient")
+  updatedAt: DateTime!
+}
+
+type File implements Node {
+  contentType: String!
+  createdAt: DateTime!
+  id: ID! @isUnique
+  name: String!
+  secret: String! @isUnique
+  size: Int!
+  updatedAt: DateTime!
+  url: String! @isUnique
+}
+
+type Project implements Node {
+  client: Client @relation(name: "ProjectOnClient")
+  createdAt: DateTime!
+  id: ID! @isUnique
+  timesheets: [Timesheet!]! @relation(name: "TimesheetOnProject")
+  title: String!
+  updatedAt: DateTime!
+}
+
+type Timesheet implements Node {
+  createdAt: DateTime!
+  date: DateTime!
+  id: ID! @isUnique
+  notes: String
+  project: Project @relation(name: "TimesheetOnProject")
+  time: Float!
+  updatedAt: DateTime!
+  user: User @relation(name: "TimesheetOnUser")
+}
+
+type User implements Node {
+  createdAt: DateTime!
+  email: String @isUnique
+  firstname: String!
+  id: ID! @isUnique
+  lastname: String!
+  password: String
+  timesheets: [Timesheet!]! @relation(name: "TimesheetOnUser")
+  updatedAt: DateTime!
+}

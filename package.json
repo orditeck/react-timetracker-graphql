@@ -1,0 +1,36 @@
+{
+  "name": "timetrack",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "create-react-class": "^15.5.2",
+    "date-fns": "^1.28.4",
+    "deepmerge": "^1.3.2",
+    "history": "^4.6.1",
+    "immutability-helper": "^2.2.0",
+    "office-ui-fabric-react": "^2.24.2",
+    "prop-types": "^15.5.8",
+    "react": "^15.5.4",
+    "react-apollo": "^1.1.3",
+    "react-cookie": "^1.0.4",
+    "react-dom": "^15.5.4",
+    "react-input-autosize": "^1.1.0",
+    "react-router-dom": "^4.1.1",
+    "react-select": "^1.0.0-rc.3"
+  },
+  "devDependencies": {
+    "react-scripts": "0.9.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "postbuild": "npm run delete-maps",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "analyzer": "NODE_ENV=production webpack --config=./node_modules/react-scripts/config/webpack.config.prod.js --json | webpack-bundle-size-analyzer",
+    "explore": "source-map-explorer ./build/static/js/main.*.js",
+    "delete-maps": "npm run delete-map-files && npm run delete-references-to-map-files",
+    "delete-map-files": "find ./build -name '*.map' -delete",
+    "delete-references-to-map-files": "find ./build -regex '.*\\.\\(js\\|css\\)' -exec sed -i -E '\\/[\\*\\/]#\\ssourceMappingURL=main(\\.[0-9a-f]+)?\\.(css|js)\\.map(\\*\\/)?/g' {} +"
+  }
+}

@@ -1,0 +1,48 @@
+header#mastheader {
+
+  height: 50px;
+  line-height: 50px;
+  padding: 0 20px;
+  background: #272630;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+  margin-bottom: 20px;
+
+  .left {
+    float: left;
+
+    .ms-Icon {
+      position: relative;
+      top: 3px;
+      margin-right: 11px;
+    }
+  }
+
+  .right {
+    float: right;
+  }
+
+  .button {
+    position: relative;
+    text-decoration: none;
+    background: none;
+    color: white;
+    border: none;
+    padding: 0 10px;
+    min-width: 50px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 5px;
+    text-transform: uppercase;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+
+
+    &:hover {
+      background: $ms-color-themePrimary;
+    }
+  }
+
+}

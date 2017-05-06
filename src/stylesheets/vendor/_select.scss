@@ -1,0 +1,43 @@
+.ms-Panel-content {
+
+  .Select {
+
+    font-size: 11px;
+
+    &.is-focused {
+      .Select-control {
+        border-color: #0078d7!important;
+      }
+    }
+
+    .Select-control {
+      height: 32px;
+      border-radius: 0;
+
+      &:hover {
+        border-color: #767676;
+        box-shadow: none;
+      }
+
+      .Select-input {
+        height: 32px;
+      }
+
+      .Select-placeholder {
+        line-height: 31px;
+      }
+
+    }
+  }
+
+}
+
+thead {
+
+  .Select-control {
+    border-bottom: 0;
+    border-radius: 0;
+    border-color: #eaeaea;
+  }
+
+}
