@@ -13,12 +13,20 @@ sign in mutations.
 
 ## Quick deploy
 
+Quick deploying allows you to try the app but not fully. You can create 
+clients and projects but you won't be able to actually create time
+sheets. You have to be authenticated to create a time sheet. And to be
+authenticated, you need a free registered account with Graphcool because 
+non-registered disposable APIs don't have the authentication feature.
+
+To quick deploy:
+
 1. Clone the repo
 2. Click [![graphql-up](http://static.graph.cool/images/graphql-up.svg)](https://www.graph.cool/graphql-up/new?source=https://raw.githubusercontent.com/orditeck/react-timetracker-graphql/master/timetracker.schema)  to deploy your GraphQL API. It's free, no account required!
 3. Click the "Get GraphQL API" button, it'll deploy your API and give you an URL like `https://api.graph.cool/simple/v1/UNIQUE_NAME`
 4. Edit [this line](https://github.com/orditeck/react-timetracker-graphql/blob/master/src/components/helpers/ApolloClient.js#L5) and put your own API URL. 
 3. Run `npm install`
-4. Run `npm run`
+4. Run `npm start`
 5. Enjoy!
 
 ## Full install with authentication
@@ -30,7 +38,7 @@ sign in mutations.
 5. Edit [this line](https://github.com/orditeck/react-timetracker-graphql/blob/master/src/components/helpers/ApolloClient.js#L5) and put your own API URL. 
 6. Edit [this line](https://github.com/orditeck/react-timetracker-graphql/blob/master/src/components/stores/AuthStore.js#L10) and set `this.authAvailable` to `true`. 
 7. Run `npm install`
-8. Run `npm run`
+8. Run `npm start`
 9. Enjoy!
 
 
