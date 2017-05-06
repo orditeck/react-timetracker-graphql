@@ -49,6 +49,7 @@ Upcoming features:
 - Ability to specify project budget in hours
 - Ability to view worked/remaining hours on project listing
 - Ability to view all times entries for a specific project, with filters like employee, dates, ...
+- Pagination
 - And probably more useful stuff
 
 I made this project for fun, don't expect regular updates. 
