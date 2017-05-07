@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import merge from 'deepmerge';
 import gql from 'graphql-tag';
 import ApolloClient from '../helpers/ApolloClient';
 import AuthStore from '../stores/AuthStore';
@@ -39,6 +40,7 @@ export default class Projects extends Component {
             validationError: '',
             form: {
                 id: null,
+                budget: null,
                 title: null,
                 company: null,
                 client_id: null
@@ -77,9 +79,13 @@ export default class Projects extends Component {
                   }) {
                     id
                     title
+                    budget
                     client {
                         id
                         company
+                    }
+                    timesheets {
+                        time 
                     }
                   }
                 }`})
@@ -158,19 +164,20 @@ export default class Projects extends Component {
     };
 
     onClientSelectChange = (selection) => {
-        this.setState({ form: {
-            id: this.state.form.id,
-            title: this.state.form.title,
-            company: selection ? selection.label : null,
-            client_id: selection ? selection.value : null,
-        }});
+        this.setState(merge(this.state, {
+            form: {
+                company: selection ? selection.label : null,
+                client_id: selection ? selection.value : null,
+            }
+        }));
     };
 
     submitAdd = () => {
-        if(!this.state.form) return this.setState({ validationError: 'Please fill in the company name.' });
-        if(!this.state.form.client_id || !this.state.form.client_id.length) return this.setState({ validationError: 'Please select the client.' });
-        if(!this.state.form.title || !this.state.form.title.length) return this.setState({ validationError: 'Please fill in the project title.' });
-        if(this.state.form.id) return this.setState({ validationError: 'Invalid request.' });
+        const { form } = this.state;
+        if(!form) return this.setState({ validationError: 'Please fill in the company name.' });
+        if(!form.client_id || !form.client_id.length) return this.setState({ validationError: 'Please select the client.' });
+        if(!form.title || !form.title.length) return this.setState({ validationError: 'Please fill in the project title.' });
+        if(form.id) return this.setState({ validationError: 'Invalid request.' });
 
         this.setState({ loading: true });
 
@@ -178,8 +185,9 @@ export default class Projects extends Component {
             mutation: gql`
             mutation {
               createProject(
-                title: "${this.state.form.title}"
-                clientId: "${this.state.form.client_id}"
+                title: "${form.title}"
+                budget: "${form.budget}"
+                clientId: "${form.client_id}"
               ) {
                 id
               }
@@ -202,6 +210,7 @@ export default class Projects extends Component {
               updateProject(
                 id: "${form.id}"
                 title: "${form.title}"
+                budget: ${parseFloat(form.budget) || 0}
                 clientId: "${form.client_id}"
               ) {
                 id
@@ -279,20 +288,30 @@ export default class Projects extends Component {
                 <DetailsList
                     setKey='items'
                     items={ [ ...Object.values(this.state.projects).map(project => {
+                        let totalTime = 0;
+                        if(project.timesheets){
+                            project.timesheets.forEach((timesheet) => {
+                                totalTime += parseFloat(timesheet.time);
+                            });
+                        }
                         return {
                             id: project.id,
                             title: project.title,
+                            budget: project.budget,
                             company: project.client ? project.client.company : null,
-                            client_id: project.client ? project.client.id : null
+                            client_id: project.client ? project.client.id : null,
+                            totalTime: totalTime
                         }
                     }) ] }
                     columns={ [
                         { name: 'Company', fieldName: 'company', key: 'col_company' },
-                        { name: 'Project', fieldName: 'title', key: 'col_project' }
+                        { name: 'Project', fieldName: 'title', key: 'col_project', minWidth: 400 },
+                        { name: 'Budget', fieldName: 'budget', key: 'col_budget' },
+                        { name: 'Time spent', fieldName: 'totalTime', key: 'col_totalTime' }
                     ] }
                     selection={ this.selection }
                     checkboxVisibility={ true }
-                    layoutMode={ LayoutMode.fixedColumns }
+                    layoutMode={ LayoutMode.justified }
                     isHeaderVisible={ true }
                     selectionMode={ SelectionMode.single }
                     constrainMode={ ConstrainMode.horizontalConstrained }
@@ -332,12 +351,13 @@ export default class Projects extends Component {
                     <TextField
                         label="Title"
                         defaultValue={ this.state.form.title }
-                        onChanged={ (value) => this.setState({ form: {
-                            id: this.state.form.id,
-                            title: value,
-                            company: this.state.form.company,
-                            client_id: this.state.form.client_id
-                        } }) }
+                        onChanged={ (value) => this.setState(merge(this.state, { form: { title: value } })) }
+                    />
+
+                    <TextField
+                        label="Budget"
+                        defaultValue={ this.state.form.budget }
+                        onChanged={ (value) => this.setState(merge(this.state, { form: { budget: value } })) }
                     />
                 </Panel>
 

@@ -18,6 +18,7 @@ type File implements Node {
 }
 
 type Project implements Node {
+  budget: Float
   client: Client @relation(name: "ProjectOnClient")
   createdAt: DateTime!
   id: ID! @isUnique
