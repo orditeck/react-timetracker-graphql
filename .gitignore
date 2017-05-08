@@ -1,5 +1,7 @@
-
 # Created by https://www.gitignore.io/api/node,macos,phpstorm
+
+# Ignore config file
+/src/config.js
 
 # Build
 /build

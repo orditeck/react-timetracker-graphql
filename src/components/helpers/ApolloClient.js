@@ -1,8 +1,9 @@
 import { ApolloClient as Client, createNetworkInterface } from 'react-apollo';
 import AuthStore from '../stores/AuthStore';
+import Config from '../../config';
 
 const networkInterface = createNetworkInterface({
-    uri: 'https://api.graph.cool/simple/v1/PROJECT_ID_HERE',
+    uri: Config.graphql_api_url,
 });
 
 networkInterface.use([{
