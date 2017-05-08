@@ -19,7 +19,6 @@ export default class Layout extends Component {
 
     validateAuth = () => {
 
-        if(!AuthStore.authAvailable) return true;
         if(!AuthStore.auth.token) AuthStore.logout();
 
         return new ApolloClient().query({

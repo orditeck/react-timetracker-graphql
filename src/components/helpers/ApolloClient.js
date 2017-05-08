@@ -5,19 +5,17 @@ const networkInterface = createNetworkInterface({
     uri: 'https://api.graph.cool/simple/v1/PROJECT_ID_HERE',
 });
 
-if(AuthStore.authAvailable === true){
-    networkInterface.use([{
-        applyMiddleware(req, next) {
-            if (!req.options.headers) {
-                req.options.headers = {};  // Create the header object if needed.
-            }
-
-            // get the authentication token from local storage if it exists
-            req.options.headers.authorization = AuthStore.auth.token ? `Bearer ${AuthStore.auth.token}` : null;
-            next();
+networkInterface.use([{
+    applyMiddleware(req, next) {
+        if (!req.options.headers) {
+            req.options.headers = {};  // Create the header object if needed.
         }
-    }]);
-}
+
+        // get the authentication token from local storage if it exists
+        req.options.headers.authorization = AuthStore.auth.token ? `Bearer ${AuthStore.auth.token}` : null;
+        next();
+    }
+}]);
 
 export default class ApolloClient extends Client {
     constructor(){
