@@ -148,8 +148,7 @@ export default class Project extends Component {
         const pageError = this.state.pageError ? <MessageBar messageBarType={ MessageBarType.error }>{this.state.pageError}</MessageBar> : '';
         const items = (() => {
             let weeks = [];
-            Object.values(this.groupWeeksByUser()).map(user => {
-
+            Object.values(this.groupWeeksByUser()).forEach(user => {
                 Object.values(user.weeks).forEach(week => {
                     weeks.push({
                         id: user.id,
