@@ -257,7 +257,7 @@ export default class Projects extends Component {
 
                 { loading }
 
-                { this.state.fireRedirect ? <Redirect to={this.state.fireRedirect}/> : '' }
+                { this.state.fireRedirect ? <Redirect to={this.state.fireRedirect} push /> : '' }
 
                 <CommandBar
                     isSearchBoxVisible={ true }
