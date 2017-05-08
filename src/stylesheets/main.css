@@ -6193,11 +6193,13 @@ header#mastheader {
   user-select: none;
   margin-bottom: 20px; }
   header#mastheader .left {
-    float: left; }
+    position: relative;
+    float: left;
+    font-weight: 500; }
     header#mastheader .left .ms-Icon {
-      position: relative;
-      top: 3px;
-      margin-right: 11px; }
+      position: absolute;
+      font-size: 22px;
+      top: -5px; }
   header#mastheader .right {
     float: right; }
   header#mastheader .button {

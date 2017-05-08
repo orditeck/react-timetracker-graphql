@@ -10,12 +10,14 @@ header#mastheader {
   margin-bottom: 20px;
 
   .left {
+    position: relative;
     float: left;
+    font-weight: 500;
 
     .ms-Icon {
-      position: relative;
-      top: 3px;
-      margin-right: 11px;
+      position: absolute;
+      font-size: 22px;
+      top: -5px;
     }
   }
 

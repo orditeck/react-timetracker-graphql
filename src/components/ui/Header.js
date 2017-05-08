@@ -8,8 +8,8 @@ export default class Header extends Component {
             <header id="mastheader">
 
                 <div className="left ms-font-xl ms-fontColor-white">
-                    <i className='ms-Icon ms-Icon--DateTime' />
                     Timetrack
+                    <i className='ms-Icon ms-Icon--JS' />
                 </div>
 
                 <div className="right">
