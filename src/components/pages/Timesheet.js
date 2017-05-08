@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import merge from 'deepmerge';
 import gql from 'graphql-tag';
+import { Redirect } from 'react-router-dom';
 import ApolloClient from '../helpers/ApolloClient';
 import { startOfWeek, addDays, subDays, format, parse } from 'date-fns';
 
@@ -16,10 +17,8 @@ import Select from 'react-select';
 
 export default class Timesheet extends Component {
 
-    constructor() {
+    constructor(props) {
         super();
-
-        const baseDate = startOfWeek(new Date(), { weekStartsOn: 1 }); // Week start on Monday
 
         this.entryTimer = [];
         this.searchTimer = false;
@@ -28,6 +27,10 @@ export default class Timesheet extends Component {
             loading: false,
             timesheet: false,
             editionPanelOpened: false,
+            fireRedirect: false,
+            userId: props.match.params.userId || AuthStore.auth.user_id,
+            firstname: '',
+            lastname: '',
             entries: [],
             form: {
                 timesheet_id: null,
@@ -37,21 +40,40 @@ export default class Timesheet extends Component {
                 time: null,
                 notes: '',
             },
-            dates: [
-                format(baseDate, 'YYYY-MM-DD'),
-                format(addDays(baseDate, 1), 'YYYY-MM-DD'),
-                format(addDays(baseDate, 2), 'YYYY-MM-DD'),
-                format(addDays(baseDate, 3), 'YYYY-MM-DD'),
-                format(addDays(baseDate, 4), 'YYYY-MM-DD'),
-                format(addDays(baseDate, 5), 'YYYY-MM-DD'),
-                format(addDays(baseDate, 6), 'YYYY-MM-DD')
-            ]
+            dates: this.getDatesFromProps(props.match.params.week ? props.match.params.week : new Date())
         };
     }
 
     componentDidMount() {
         this.fetch();
     }
+
+    componentWillReceiveProps(nextProps) {
+        if(
+            (nextProps.match.params.week !== this.props.match.params.week) ||
+            (nextProps.match.params.userId !== this.props.match.params.userId)
+        ){
+            this.setState({
+                fireRedirect: false,
+                dates: this.getDatesFromProps(nextProps.match.params.week ? nextProps.match.params.week : new Date()),
+                userId: nextProps.match.params.userId ? nextProps.match.params.userId : AuthStore.auth.user_id
+            }, this.fetch);
+        }
+    }
+
+    getDatesFromProps = (monday) => {
+        const date = monday ? monday : new Date();
+        const baseDate = startOfWeek(date, { weekStartsOn: 1 }); // Week start on Monday
+        return [
+            format(baseDate, 'YYYY-MM-DD'),
+            format(addDays(baseDate, 1), 'YYYY-MM-DD'),
+            format(addDays(baseDate, 2), 'YYYY-MM-DD'),
+            format(addDays(baseDate, 3), 'YYYY-MM-DD'),
+            format(addDays(baseDate, 4), 'YYYY-MM-DD'),
+            format(addDays(baseDate, 5), 'YYYY-MM-DD'),
+            format(addDays(baseDate, 6), 'YYYY-MM-DD')
+        ];
+    };
 
     fetch = () => {
         if(!AuthStore.isAuthenticated) return;
@@ -61,7 +83,7 @@ export default class Timesheet extends Component {
             query: gql`
                 query {
                   allTimesheets(filter: {
-                    user: { id: "${AuthStore.auth.user_id}" }
+                    user: { id: "${this.state.userId}" }
                     date_gte: "${this.state.dates[0]}"
                     date_lte: "${this.state.dates[6]}"
                     project: {  }
@@ -77,6 +99,10 @@ export default class Timesheet extends Component {
                             company
                         }
                     }
+                  }
+                  User(id: "${this.state.userId}") {
+                    firstname
+                    lastname
                   }
                 }`})
             .then(({ data }) => {
@@ -116,7 +142,11 @@ export default class Timesheet extends Component {
 
                 });
 
-                this.setState({ entries: entries });
+                this.setState({
+                    entries: entries,
+                    firstname: data.User ? data.User.firstname : '',
+                    lastname: data.User ? data.User.lastname : ''
+                });
 
             })
             .catch(rawError => {
@@ -249,7 +279,7 @@ export default class Timesheet extends Component {
                         date: "${parse(date).toISOString()}"
                         time: ${parseFloat(time)}
                         notes: "${notes}"
-                        userId: "${AuthStore.auth.user_id}"
+                        userId: "${this.state.userId}"
                       ) {
                         id
                         time
@@ -292,17 +322,8 @@ export default class Timesheet extends Component {
 
     weekNavigator = (mode) => () => {
         let baseDate = startOfWeek(this.state.dates[0], { weekStartsOn: 1 });
-        baseDate = mode === 'add' ? addDays(baseDate, 7) : subDays(baseDate, 7);
-        const dates = [
-            format(baseDate, 'YYYY-MM-DD'),
-            format(addDays(baseDate, 1), 'YYYY-MM-DD'),
-            format(addDays(baseDate, 2), 'YYYY-MM-DD'),
-            format(addDays(baseDate, 3), 'YYYY-MM-DD'),
-            format(addDays(baseDate, 4), 'YYYY-MM-DD'),
-            format(addDays(baseDate, 5), 'YYYY-MM-DD'),
-            format(addDays(baseDate, 6), 'YYYY-MM-DD')
-        ];
-        this.setState({ dates: dates, loading: true }, this.fetch);
+        baseDate = format(mode === 'add' ? addDays(baseDate, 7) : subDays(baseDate, 7), 'YYYY-MM-DD');
+        this.setState({ fireRedirect: `/timesheets/user/${this.state.userId}/week/${baseDate}` });
     };
 
     render() {
@@ -375,6 +396,12 @@ export default class Timesheet extends Component {
             <Layout refresh={this.fetch}>
 
                 {loading}
+
+                { this.state.fireRedirect ? <Redirect to={this.state.fireRedirect} push /> : '' }
+
+                { (this.state.userId !== AuthStore.auth.user_id && this.state.firstname) ?
+                    <h2>{`${this.state.firstname} ${this.state.lastname}'s time sheet`}</h2> : ''
+                }
 
                 <div className="week-navigator">
                     <IconButton iconProps={ { iconName: 'ChevronLeft' } } onClick={ this.weekNavigator('sub') } />

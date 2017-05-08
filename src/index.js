@@ -17,6 +17,10 @@ ReactDOM.render(
         <BrowserRouter>
             <Switch>
                 <Route exact path='/' component={Timesheet} />
+                <Route exact path='/timesheets' component={Timesheet} />
+                <Route exact path='/timesheets/week/:date' component={Timesheet} />
+                <Route exact path='/timesheets/user/:userId' component={Timesheet} />
+                <Route exact path='/timesheets/user/:userId/week/:week' component={Timesheet} />
                 <Route path='/clients' component={Clients} />
                 <Route exact path='/projects' component={Projects} />
                 <Route path='/projects/:projectId' component={Project} />

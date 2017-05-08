@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import updater from 'immutability-helper';
 import gql from 'graphql-tag';
+import { Redirect } from 'react-router-dom';
 import ApolloClient from '../helpers/ApolloClient';
 import AuthStore from '../stores/AuthStore';
 
@@ -32,6 +33,7 @@ export default class Users extends Component {
             creationPanelOpened: false,
             deletionPanelOpened: false,
             selected: false,
+            fireRedirect: false,
             search: '',
             pageError: '',
             validationError: '',
@@ -204,6 +206,8 @@ export default class Users extends Component {
 
                 { loading }
 
+                { this.state.fireRedirect ? <Redirect to={this.state.fireRedirect} push /> : '' }
+
                 <CommandBar
                     isSearchBoxVisible={ true }
                     items={ [
@@ -212,6 +216,13 @@ export default class Users extends Component {
                             name: 'New',
                             key: 'new',
                             onClick: () => this.setState({ client: { id: null, company: '' }, creationPanelOpened: 'Add' }),
+                        },
+                        {
+                            icon: 'FabricFolderSearch',
+                            name: 'View Time Sheets',
+                            key: 'open_details',
+                            disabled: !this.state.selected,
+                            onClick: () => this.setState({ fireRedirect: `/timesheets/user/${this.state.selected.id}` }),
                         },
                         {
                             icon: 'Edit',
@@ -246,7 +257,7 @@ export default class Users extends Component {
                     selection={ this.selection }
                     layoutMode={ LayoutMode.fixedColumns }
                     selectionMode={ SelectionMode.single }
-                    onItemInvoked={ () => this.setState({ form: this.state.selected, creationPanelOpened: 'Edit' }) }
+                    onItemInvoked={ () => this.setState({ fireRedirect: `/timesheets/user/${this.state.selected.id}` }) }
                 />
 
                 <Panel
