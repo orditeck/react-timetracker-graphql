@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import merge from 'deepmerge';
 import gql from 'graphql-tag';
+import { Redirect } from 'react-router-dom'
 import ApolloClient from '../helpers/ApolloClient';
 import AuthStore from '../stores/AuthStore';
 
@@ -35,6 +36,7 @@ export default class Projects extends Component {
             creationPanelOpened: false,
             deletionPanelOpened: false,
             selected: false,
+            fireRedirect: false,
             search: '',
             pageError: '',
             validationError: '',
@@ -255,6 +257,8 @@ export default class Projects extends Component {
 
                 { loading }
 
+                { this.state.fireRedirect ? <Redirect to={this.state.fireRedirect}/> : '' }
+
                 <CommandBar
                     isSearchBoxVisible={ true }
                     items={ [
@@ -263,6 +267,13 @@ export default class Projects extends Component {
                             name: 'New',
                             key: 'new',
                             onClick: () => this.setState({ form: { id: null, title: null, company: null, client_id: null }, creationPanelOpened: 'Add' }),
+                        },
+                        {
+                            icon: 'FabricFolderSearch',
+                            name: 'Open details',
+                            key: 'open_details',
+                            disabled: !this.state.selected,
+                            onClick: () => this.setState({ fireRedirect: `/projects/${this.state.selected.id}` }),
                         },
                         {
                             icon: 'Edit',
@@ -315,7 +326,7 @@ export default class Projects extends Component {
                     isHeaderVisible={ true }
                     selectionMode={ SelectionMode.single }
                     constrainMode={ ConstrainMode.horizontalConstrained }
-                    onItemInvoked={ () => this.setState({ form: this.state.selected, creationPanelOpened: 'Edit' }) }
+                    onItemInvoked={ () => this.setState({ fireRedirect: `/projects/${this.state.selected.id}` }) }
                 />
 
                 <Panel

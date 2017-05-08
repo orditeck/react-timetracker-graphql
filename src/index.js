@@ -8,6 +8,7 @@ import './stylesheets/main.css';
 import Timesheet from './components/pages/Timesheet';
 import Clients from './components/pages/Clients';
 import Projects from './components/pages/Projects';
+import Project from './components/pages/Project';
 import Users from './components/pages/Users';
 import NotFound from './components/pages/NotFound';
 
@@ -17,7 +18,8 @@ ReactDOM.render(
             <Switch>
                 <Route exact path='/' component={Timesheet} />
                 <Route path='/clients' component={Clients} />
-                <Route path='/projects' component={Projects} />
+                <Route exact path='/projects' component={Projects} />
+                <Route path='/projects/:projectId' component={Project} />
                 <Route path='/users' component={Users} />
                 <Route component={NotFound} />
             </Switch>
