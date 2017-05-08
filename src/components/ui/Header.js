@@ -8,7 +8,7 @@ export default class Header extends Component {
             <header id="mastheader">
 
                 <div className="left ms-font-xl ms-fontColor-white">
-                    Timetrack
+                    Timetracker
                     <i className='ms-Icon ms-Icon--JS' />
                 </div>
 
