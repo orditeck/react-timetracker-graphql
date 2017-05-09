@@ -32,7 +32,8 @@ sign in mutations.
 
 ### Create the first user
 
-There is no easy way right now to create the first user. Feel free to PR to add one :)
+There is no quick/easy way right now to create the first user.  
+Feel free to PR to add one :)
 
 1. Install React Dev Tools
 2. Go to `/users` 
