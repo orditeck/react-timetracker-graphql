@@ -188,7 +188,7 @@ export default class Projects extends Component {
             mutation {
               createProject(
                 title: "${form.title}"
-                budget: "${form.budget}"
+                budget: ${parseFloat(form.budget) || 0}
                 clientId: "${form.client_id}"
               ) {
                 id
