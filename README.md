@@ -25,7 +25,7 @@ sign in mutations.
 3. Replicate [the schema](https://github.com/orditeck/react-timetracker-graphql/blob/master/timetracker.schema) in your own project. It's currently not possible to import a schema in the Console (Web UI) of Graphcool. I chatted with them and they're working on a CLI tool that will have this feature. Should be ready in the next few days/weeks.
 4. In the `Permissions` tabs of Graphcool Console, make sure to mark all calls with `Authentication required` except `Create` in `User` model (you'll se why later)
 5. Clone the repo
-6. Rename [`config.example.js`](https://github.com/orditeck/react-timetracker-graphql/blob/master/src/config.example.js) to `config.js` and set your own API url
+6. Copy [`config.example.js`](https://github.com/orditeck/react-timetracker-graphql/blob/master/src/config.example.js) to `config.js` and set your own API url
 7. Run `npm install`
 8. Run `npm start`
 9. Enjoy! Please consider ★ starring the repo
