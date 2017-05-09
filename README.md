@@ -35,7 +35,7 @@ sign in mutations.
 There is no quick/easy way right now to create the first user.  
 Feel free to PR to add one :)
 
-1. Install React Dev Tools
+1. Install [React Dev Tools](https://github.com/facebook/react-devtools)
 2. Go to `/users` 
 3. Find the React Component `<t refresh=fn()>` and set `showPanel` state to `false`
 4. You'll now be able to click the `+ New` button, click it to add a user
