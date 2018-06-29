@@ -2,10 +2,6 @@
 
 Small time tracking React app using GraphQL & Fabric UI.
 
-Demo: [timetracker-demo.inko.ca](https://timetracker-demo.inko.ca/)  
-Email: demo@demo.com  
-Password: demo
-
 ![Timetracker](http://i.imgur.com/W2qnSb6.gif)
 
 Manage clients & their project and your employees & their time sheets.
