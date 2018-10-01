@@ -308,7 +308,7 @@ export default class Users extends Component {
                                 />
                         </div> :
                             <p>
-                                Due to a <a href="https://github.com/graphcool/feature-requests/issues/39" target="_blank">graphcool limitation</a>,
+                                Due to a <a href="https://github.com/graphcool/feature-requests/issues/39" target="_blank" rel="noopener noreferrer">graphcool limitation</a>,
                                 we can't update email/password on existing user.
                             </p>
                     }
