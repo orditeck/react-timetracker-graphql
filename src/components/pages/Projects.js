@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import merge from 'deepmerge';
 import gql from 'graphql-tag';
 import { Redirect } from 'react-router-dom'
 import ApolloClient from '../helpers/ApolloClient';
@@ -166,12 +165,14 @@ export default class Projects extends Component {
     };
 
     onClientSelectChange = (selection) => {
-        this.setState(merge(this.state, {
+        this.setState({
+            ...this.state,
             form: {
+                ...this.state.form,
                 company: selection ? selection.label : null,
                 client_id: selection ? selection.value : null,
             }
-        }));
+        });
     };
 
     submitAdd = () => {
@@ -362,13 +363,25 @@ export default class Projects extends Component {
                     <TextField
                         label="Title"
                         defaultValue={ this.state.form.title }
-                        onChanged={ (value) => this.setState(merge(this.state, { form: { title: value } })) }
+                        onChanged={(value) => this.setState({
+                            ...this.state,
+                            form: {
+                                ...this.state.form,
+                                title: value
+                            }
+                        })}
                     />
 
                     <TextField
                         label="Budget"
                         defaultValue={ this.state.form.budget }
-                        onChanged={ (value) => this.setState(merge(this.state, { form: { budget: value } })) }
+                        onChanged={(value) => this.setState({
+                            ...this.state,
+                            form: {
+                                ...this.state.form,
+                                budget: value
+                            }
+                        })}
                     />
                 </Panel>
 
