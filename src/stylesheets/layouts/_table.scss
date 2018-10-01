@@ -9,6 +9,21 @@ table, table.ms-Table {
         margin: 0;
       }
 
+      &.disabled {
+        .ms-TextField > div {
+          @keyframes animateBorder {
+            0% { border: 1px solid #c8c8c8; }
+            25% { border: 1px solid $ms-color-themePrimary; }
+            50% { border: 1px solid #c8c8c8; }
+            75% { border: 1px solid $ms-color-themePrimary; }
+            100% { border: 1px solid #c8c8c8; }
+          }
+
+          animation: animateBorder 3000ms normal;
+          animation-iteration-count: infinite;
+        }
+      }
+
       &.saved {
 
         .ms-TextField > div {

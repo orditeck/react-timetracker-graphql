@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import merge from 'deepmerge';
+import React, {Component} from 'react';
 import gql from 'graphql-tag';
-import { Redirect } from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import ApolloClient from '../helpers/ApolloClient';
-import { startOfWeek, addDays, subDays, format, parse } from 'date-fns';
+import {startOfWeek, addDays, subDays, format, parse} from 'date-fns';
 
 import AuthStore from '../stores/AuthStore';
 
 import Layout from '../ui/Layout';
 import Loader from '../ui/Loader';
 
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
-import { PrimaryButton, DefaultButton, IconButton } from 'office-ui-fabric-react/lib/Button';
+import {TextField} from 'office-ui-fabric-react/lib/TextField';
+import {Panel, PanelType} from 'office-ui-fabric-react/lib/Panel';
+import {PrimaryButton, DefaultButton, IconButton} from 'office-ui-fabric-react/lib/Button';
 import Select from 'react-select';
 
 export default class Timesheet extends Component {
@@ -27,6 +26,7 @@ export default class Timesheet extends Component {
             loading: false,
             timesheet: false,
             editionPanelOpened: false,
+            entrySavingInPrgress: false,
             fireRedirect: false,
             userId: props.match.params.userId || AuthStore.auth.user_id,
             firstname: '',
@@ -49,10 +49,10 @@ export default class Timesheet extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(
+        if (
             (nextProps.match.params.week !== this.props.match.params.week) ||
             (nextProps.match.params.userId !== this.props.match.params.userId)
-        ){
+        ) {
             this.setState({
                 fireRedirect: false,
                 dates: this.getDatesFromProps(nextProps.match.params.week ? nextProps.match.params.week : new Date()),
@@ -63,7 +63,7 @@ export default class Timesheet extends Component {
 
     getDatesFromProps = (monday) => {
         const date = monday ? monday : new Date();
-        const baseDate = startOfWeek(date, { weekStartsOn: 1 }); // Week start on Monday
+        const baseDate = startOfWeek(date, {weekStartsOn: 1}); // Week start on Monday
         return [
             format(baseDate, 'YYYY-MM-DD'),
             format(addDays(baseDate, 1), 'YYYY-MM-DD'),
@@ -76,9 +76,9 @@ export default class Timesheet extends Component {
     };
 
     fetch = () => {
-        if(!AuthStore.isAuthenticated) return;
+        if (!AuthStore.isAuthenticated) return;
 
-        this.setState({ loading: true });
+        this.setState({loading: true});
         new ApolloClient().query({
             query: gql`
                 query {
@@ -104,9 +104,10 @@ export default class Timesheet extends Component {
                     firstname
                     lastname
                   }
-                }`})
-            .then(({ data }) => {
-                this.setState({ loading: false });
+                }`
+        })
+            .then(({data}) => {
+                this.setState({loading: false});
 
                 let entries = [];
 
@@ -114,7 +115,7 @@ export default class Timesheet extends Component {
 
                     let formattedDate = format(parse(timesheet.date), 'YYYY-MM-DD');
 
-                    if(timesheet.project.id in entries) {
+                    if (timesheet.project.id in entries) {
                         entries[timesheet.project.id]['dates'][formattedDate] = {
                             timesheet_id: timesheet.id,
                             date: formattedDate,
@@ -122,7 +123,7 @@ export default class Timesheet extends Component {
                             notes: unescape(timesheet.notes),
                             saved: true
                         };
-                    }else{
+                    } else {
                         entries[timesheet.project.id] = {
                             project: {
                                 id: timesheet.project.id,
@@ -151,13 +152,13 @@ export default class Timesheet extends Component {
             })
             .catch(rawError => {
                 const error = JSON.parse(JSON.stringify(rawError));
-                if(error.graphQLErrors && error.graphQLErrors[0])
-                    this.setState({ error: error.graphQLErrors[0].message, entries: [] });
+                if (error.graphQLErrors && error.graphQLErrors[0])
+                    this.setState({error: error.graphQLErrors[0].message, entries: []});
             });
     };
 
     searchProject = (search, callback) => {
-        if(!AuthStore.isAuthenticated) return callback(null, { options: [] });
+        if (!AuthStore.isAuthenticated) return callback(null, {options: []});
 
         clearTimeout(this.searchTimer);
 
@@ -177,13 +178,14 @@ export default class Timesheet extends Component {
                           company
                         }
                       }
-                    }`})
-                .then(({ data }) => {
+                    }`
+            })
+                .then(({data}) => {
                     let options = [];
 
-                    if(data && data.allProjects){
+                    if (data && data.allProjects) {
                         data.allProjects.map((project) => {
-                            if(!(project.id in this.state.entries)){
+                            if (!(project.id in this.state.entries)) {
                                 return options.push({
                                     value: project.id,
                                     label: `${project.client.company} - ${project.title}`
@@ -200,29 +202,29 @@ export default class Timesheet extends Component {
                 })
                 .catch(rawError => {
                     const error = JSON.parse(JSON.stringify(rawError));
-                    if(error.graphQLErrors && error.graphQLErrors[0])
-                        this.setState({ error: error.graphQLErrors[0].message });
+                    if (error.graphQLErrors && error.graphQLErrors[0])
+                        this.setState({error: error.graphQLErrors[0].message});
                 });
         }, 500);
 
     };
 
     onProjectChange = (selection) => {
-        let { entries } = this.state;
+        let {entries} = this.state;
 
         entries[selection.value] = {
             project: {
                 id: selection.value,
                 title: selection.label
             },
-            dates: {  }
+            dates: {}
         };
 
-        this.setState({ entries: entries });
+        this.setState({entries: entries});
     };
 
     updateEntry = () => {
-        const { form } = this.state;
+        const {form} = this.state;
         const timesheet_id = form.timesheet_id;
         const project_id = form.project_id;
         const date = form.date;
@@ -231,8 +233,8 @@ export default class Timesheet extends Component {
         const timerIndex = `${project_id}-${date}`;
         let timerTime = 1000;
 
-        if(this.state.editionPanelOpened){
-            this.setState({ loading: true });
+        if (this.state.editionPanelOpened) {
+            this.setState({loading: true});
             timerTime = 0;
         }
 
@@ -240,11 +242,13 @@ export default class Timesheet extends Component {
 
         this.entryTimer[timerIndex] = setTimeout(() => {
 
+            this.setState({entrySavingInPrgress: true});
+
             let client;
 
-            if(timesheet_id){
+            if (timesheet_id) {
 
-                if(parseFloat(time) > 0){
+                if (parseFloat(time) > 0) {
                     client = new ApolloClient().mutate({
                         mutation: gql`
                         mutation {
@@ -256,8 +260,9 @@ export default class Timesheet extends Component {
                             id
                             time
                           }
-                        }`});
-                }else{
+                        }`
+                    });
+                } else {
                     client = new ApolloClient().mutate({
                         mutation: gql`
                         mutation {
@@ -267,7 +272,8 @@ export default class Timesheet extends Component {
                             id
                             time
                           }
-                        }`});
+                        }`
+                    });
                 }
 
             } else {
@@ -284,56 +290,64 @@ export default class Timesheet extends Component {
                         id
                         time
                       }
-                    }`});
+                    }`
+                });
             }
 
-            client.then(({ data }) => {
+            client.then(({data}) => {
                 let entry = (data.createTimesheet) ? data.createTimesheet : data.updateTimesheet;
                 const entryToSave = typeof entry === 'undefined' ? null : {
-                        timesheet_id: entry.id,
-                        date: date,
-                        time: time,
-                        notes: notes,
-                        saved: true
-                    };
+                    timesheet_id: entry.id,
+                    date: date,
+                    time: time,
+                    notes: notes,
+                    saved: true
+                };
 
                 this.setState({
+                    ...this.state,
                     loading: false,
                     editionPanelOpened: false,
-                    form: { },
-                    entries: merge(this.state.entries, {
+                    entrySavingInPrgress: false,
+                    form: {},
+                    entries: {
+                        ...this.state.entries,
                         [project_id]: {
+                            ...this.state.entries[project_id],
                             dates: {
+                                ...this.state.entries[project_id].dates,
                                 [date]: entryToSave
                             }
                         }
-                    })
+                    }
                 });
 
             })
                 .catch(rawError => {
                     const error = JSON.parse(JSON.stringify(rawError));
-                    if(error.graphQLErrors && error.graphQLErrors[0])
-                        this.setState({ error: error.graphQLErrors[0].message });
+                    if (error.graphQLErrors && error.graphQLErrors[0])
+                        this.setState({error: error.graphQLErrors[0].message});
                 });
 
         }, timerTime);
     };
 
     weekNavigator = (mode) => () => {
-        let baseDate = startOfWeek(this.state.dates[0], { weekStartsOn: 1 });
+        let baseDate = startOfWeek(this.state.dates[0], {weekStartsOn: 1});
         baseDate = format(mode === 'add' ? addDays(baseDate, 7) : subDays(baseDate, 7), 'YYYY-MM-DD');
-        this.setState({ fireRedirect: `/timesheets/user/${this.state.userId}/week/${baseDate}` });
+        this.setState({fireRedirect: `/timesheets/user/${this.state.userId}/week/${baseDate}`});
     };
 
     render() {
-        const loading = this.state.loading ? <Loader label="Fetching the time sheet..." /> : '';
+        const loading = this.state.loading ? <Loader label="Fetching the time sheet..."/> : '';
 
         const tableHeaderDates = this.state.dates.map((date, index) => {
             return <th key={`th-${index}`}>{format(date, 'dd. Do MMM')}</th>
         });
 
         const rows = Object.values(this.state.entries).map((project_entry, index) => {
+            let hasSavingInProgress = this.state.entrySavingInPrgress;
+
             return <tr key={`tr-${index}`}>
                 <td>{project_entry.project.title}</td>
                 {[...Array(7)].map((_, i) => {
@@ -344,11 +358,13 @@ export default class Timesheet extends Component {
                     let notes = entry ? project_entry.dates[date].notes : '';
                     let saved = entry ? project_entry.dates[date].saved : false;
 
-                    return <td key={`th-${i}`} className={ saved ? 'saved' : '' }>
+                    return <td key={`th-${i}`} className={saved ? 'saved' : (this.state.entrySavingInPrgress ? 'disabled' : '')}>
                         <TextField
-                            value={ time }
-                            onChanged={ (value) => {
+                            value={time}
+                            disabled={hasSavingInProgress}
+                            onChanged={(value) => {
                                 this.setState({
+                                    ...this.state,
                                     form: {
                                         timesheet_id: timesheet_id,
                                         project_id: project_entry.project.id,
@@ -358,34 +374,39 @@ export default class Timesheet extends Component {
                                         notes: notes,
                                         saved: false
                                     },
-                                    entries: merge(this.state.entries, {
-                                            [project_entry.project.id]: {
-                                                dates: {
-                                                    [date]: { time: value, saved: false }
+                                    entries: {
+                                        ...this.state.entries,
+                                        [project_entry.project.id]: {
+                                            ...this.state.entries[project_entry.project.id],
+                                            dates: {
+                                                ...this.state.entries[project_entry.project.id].dates,
+                                                [date]: {
+                                                    time: value, saved: false
                                                 }
                                             }
-                                        })
+                                        }
+                                    }
                                 }, () => {
                                     this.updateEntry(value);
                                 });
-                            } }
+                            }}
                         />
-                        { !timesheet_id ? '' : <IconButton
-                                iconProps={ { iconName: 'EditNote' } }
-                                title='Edit note for this day'
-                                className="empty"
-                                onClick={ () => this.setState({
-                                    editionPanelOpened: true,
-                                    form: {
-                                        timesheet_id: timesheet_id,
-                                        project_id: project_entry.project.id,
-                                        project_title: project_entry.project.title,
-                                        date: date,
-                                        time: time,
-                                        notes: notes
-                                    }
-                                }) }
-                            /> }
+                        {!timesheet_id ? '' : <IconButton
+                            iconProps={{iconName: 'EditNote'}}
+                            title='Edit note for this day'
+                            className="empty"
+                            onClick={() => this.setState({
+                                editionPanelOpened: true,
+                                form: {
+                                    timesheet_id: timesheet_id,
+                                    project_id: project_entry.project.id,
+                                    project_title: project_entry.project.title,
+                                    date: date,
+                                    time: time,
+                                    notes: notes
+                                }
+                            })}
+                        />}
 
                     </td>
                 })}
@@ -397,68 +418,81 @@ export default class Timesheet extends Component {
 
                 {loading}
 
-                { this.state.fireRedirect ? <Redirect to={this.state.fireRedirect} push /> : '' }
+                {this.state.fireRedirect ? <Redirect to={this.state.fireRedirect} push/> : ''}
 
-                { (this.state.userId !== AuthStore.auth.user_id && this.state.firstname) ?
+                {(this.state.userId !== AuthStore.auth.user_id && this.state.firstname) ?
                     <h2>{`${this.state.firstname} ${this.state.lastname}'s time sheet`}</h2> : ''
                 }
 
                 <div className="week-navigator">
-                    <IconButton iconProps={ { iconName: 'ChevronLeft' } } onClick={ this.weekNavigator('sub') } />
+                    <IconButton iconProps={{iconName: 'ChevronLeft'}} onClick={this.weekNavigator('sub')}/>
                     <table className="ms-Table">
                         <thead>
                         <tr>
-                            <th style={{ width: '300px' }}>
+                            <th style={{width: '300px'}}>
                                 <Select.Async
                                     placeholder="Search a project..."
-                                    autoload={ false }
-                                    loadOptions={ this.searchProject }
-                                    onChange={ this.onProjectChange }
+                                    autoload={false}
+                                    loadOptions={this.searchProject}
+                                    onChange={this.onProjectChange}
                                 />
                             </th>
-                            { tableHeaderDates }
+                            {tableHeaderDates}
                         </tr>
                         </thead>
                         <tbody>
                         {rows}
                         </tbody>
                     </table>
-                    <IconButton iconProps={ { iconName: 'ChevronRight' } } onClick={ this.weekNavigator('add') } />
+                    <IconButton iconProps={{iconName: 'ChevronRight'}} onClick={this.weekNavigator('add')}/>
                 </div>
 
                 <Panel
-                    isOpen={ (this.state.editionPanelOpened !== false) }
-                    type={ PanelType.smallFixedFar }
-                    onDismiss={ () => this.setState({ editionPanelOpened: false }) }
+                    isOpen={(this.state.editionPanelOpened !== false)}
+                    type={PanelType.smallFixedFar}
+                    onDismiss={() => this.setState({editionPanelOpened: false})}
                     headerText={
                         [
                             `${format(this.state.form.date, 'dddd Do MMM')}`,
                             <small key="smallheaderkey">{this.state.form.project_title}</small>
                         ]}
-                    onRenderFooterContent={ () => {
+                    onRenderFooterContent={() => {
                         return (
                             <div>
                                 <PrimaryButton
-                                    onClick={ this.updateEntry }
-                                    style={ { 'marginRight': '8px' } } >
+                                    onClick={this.updateEntry}
+                                    style={{'marginRight': '8px'}}>
                                     Save
                                 </PrimaryButton>
-                                <DefaultButton onClick={ () => this.setState({ editionPanelOpened: false }) } >Cancel</DefaultButton>
+                                <DefaultButton
+                                    onClick={() => this.setState({editionPanelOpened: false})}>Cancel</DefaultButton>
                             </div>
                         );
-                    } }
+                    }}
                 >
 
                     <TextField
                         label="Time"
-                        defaultValue={ this.state.form.time }
-                        onChanged={ (value) => this.setState(merge(this.state, { form: { time: value } })) }
+                        defaultValue={this.state.form.time}
+                        onChanged={(value) => this.setState({
+                            ...this.state,
+                            form: {
+                                ...this.state.form,
+                                time: value
+                            }
+                        })}
                     />
 
                     <TextField
                         label="Notes"
-                        defaultValue={ this.state.form.notes }
-                        onChanged={ (value) => this.setState(merge(this.state, { form: { notes: value } })) }
+                        defaultValue={this.state.form.notes}
+                        onChanged={(value) => this.setState({
+                            ...this.state,
+                            form: {
+                                ...this.state.form,
+                                notes: value
+                            }
+                        })}
                         multiline
                         autoAdjustHeight
                     />

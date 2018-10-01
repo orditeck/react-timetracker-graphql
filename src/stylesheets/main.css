@@ -6242,6 +6242,20 @@ table tbody td, table.ms-Table tbody td {
   text-align: right; }
   table tbody td .ms-TextField, table.ms-Table tbody td .ms-TextField {
     margin: 0; }
+  table tbody td.disabled .ms-TextField > div, table.ms-Table tbody td.disabled .ms-TextField > div {
+    animation: animateBorder 3000ms normal;
+    animation-iteration-count: infinite; }
+@keyframes animateBorder {
+  0% {
+    border: 1px solid #c8c8c8; }
+  25% {
+    border: 1px solid #0078d7; }
+  50% {
+    border: 1px solid #c8c8c8; }
+  75% {
+    border: 1px solid #0078d7; }
+  100% {
+    border: 1px solid #c8c8c8; } }
   table tbody td.saved .ms-TextField > div, table.ms-Table tbody td.saved .ms-TextField > div {
     animation: animateBorder 700ms normal;
     animation-iteration-count: 1; }
@@ -6282,3 +6296,5 @@ table tbody td, table.ms-Table tbody td {
     content: "";
     display: table;
     clear: both; }
+
+/*# sourceMappingURL=main.css.map */
